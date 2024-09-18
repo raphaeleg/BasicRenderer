@@ -1,10 +1,8 @@
 #include <SFML/Window.hpp>
-#include <GL/glew.h>	// modern OpenGL aren't present by default
-#include <glm/glm.hpp>
+#include <GL/glew.h>
 #include <iostream>
-
-#include "Mesh.hpp"
 #include "Shader.hpp"
+#include "Mesh.hpp"
 
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
