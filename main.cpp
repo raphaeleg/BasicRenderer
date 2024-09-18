@@ -8,13 +8,12 @@ static const auto TITLE = "3D OpenGL";
 
 
 int main() {
-	const char* vertexShaderCode = "#version 330 core\n"
+	const auto vertexShaderCode = "#version 330 core\n"
 		"layout (location = 0) in vec3 pos;\n"
 		"void main() { gl_Position = vec4(pos, 1.0); }";
-	const char* fragmentShaderCode = "#version 330 core\n"
+	const auto fragmentShaderCode = "#version 330 core\n"
 		"out vec4 FragColor;\n"
 		"void main() { FragColor = vec4(1.0,1.0,0.0,1.0); }";
-		;
 	
 	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
 
@@ -23,6 +22,17 @@ int main() {
 		return -1;
 	}
 	
+	auto vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	auto success = CompileShader(vertexShaderCode, vertexShader);
+
+	auto fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	success = CompileShader(fragmentShaderCode, fragmentShader);
+
+	auto shader = glCreateProgram();
+	success = LinkShaders(shader, vertexShader, fragmentShader);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
 	while (window.isOpen()) {
 		sf::Event event{};
 		while (window.pollEvent(event)) {
@@ -39,4 +49,34 @@ int main() {
 		// 3. Display
 		window.display();
 	}
+}
+
+static int CompileShader(const char* code, size_t shader) {
+	glShaderSource(shader, 1, &code, nullptr);
+	glCompileShader(shader);
+
+	int success = 0;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (!success) { OutputError(shader); }
+	return success;
+}
+
+static int LinkShaders(size_t shader, size_t vertexShader, size_t fragmentShader) {
+	
+	glAttachShader(shader, vertexShader);
+	glAttachShader(shader, fragmentShader);
+	glLinkProgram(shader);
+
+	int success = 0;
+	glGetProgramiv(shader, GL_LINK_STATUS, &success);
+	if (!success) { OutputError(shader); }
+	return success;
+}
+
+static void OutputError(size_t shader) {
+	const auto infoBufferSize = 1024;
+	char infoLog[infoBufferSize];
+
+	glGetShaderInfoLog(shader, infoBufferSize, nullptr, infoLog);
+	std::cerr << "Failed to compiler shader!\nInfoLog:\n" << infoLog;
 }
