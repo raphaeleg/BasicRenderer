@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Mesh.hpp"
+#include "Shader.hpp"
 
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
@@ -13,51 +14,8 @@ constexpr auto vertexShaderCode = "#version 330 core\n"
 "void main() { gl_Position = vec4(pos, 1.0); }";
 constexpr auto fragmentShaderCode = "#version 330 core\n"
 "out vec4 FragColor;\n"
-"void main() { FragColor = vec4(0.0,1.0,0.0,1.0); }";
-
-static void OutputError(size_t shader) {
-	const auto infoBufferSize = 1024;
-	char infoLog[infoBufferSize];
-
-	glGetShaderInfoLog(shader, infoBufferSize, nullptr, infoLog);
-	std::cerr << "Failed to compiler shader!\nInfoLog:\n" << infoLog;
-}
-
-static int CompileShader(const char* code, size_t shader) {
-	glShaderSource(shader, 1, &code, nullptr);
-	glCompileShader(shader);
-
-	int success = 0;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) { OutputError(shader); }
-	return success;
-}
-
-static int LinkShaders(size_t shader, size_t vertexShader, size_t fragmentShader) {
-	glAttachShader(shader, vertexShader);
-	glAttachShader(shader, fragmentShader);
-	glLinkProgram(shader);
-
-	int success = 0;
-	glGetProgramiv(shader, GL_LINK_STATUS, &success);
-	if (!success) { OutputError(shader); }
-	return success;
-}
-
-static size_t CreateProgramShader() {
-	auto vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	auto success = CompileShader(vertexShaderCode, vertexShader);
-
-	auto fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	success = CompileShader(fragmentShaderCode, fragmentShader);
-
-	auto shader = glCreateProgram();
-	success = LinkShaders(shader, vertexShader, fragmentShader);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	return shader;
-}
+"uniform vec3 color;\n"
+"void main() { FragColor = vec4(color,1.0); }";
 
 int main() {
 	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
@@ -66,7 +24,7 @@ int main() {
 		return -1;
 	}
 	
-	const auto shader = CreateProgramShader();
+	Shader shader(vertexShaderCode, fragmentShaderCode);
 
 	Mesh mesh({
 		glm::vec3(0.8f, 0.8f, 0.0f),
@@ -89,7 +47,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 2. Draw
-		glUseProgram(shader);
+		shader.Use();
+		shader.SetValue("color", glm::vec3(1.0f, 0.5f, 0.5f));
 		mesh.Draw();
 
 		// 3. Display
