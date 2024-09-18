@@ -11,8 +11,8 @@ public:
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
-	Camera(glm::vec3 position, float yaw = -90.0f, float pitch = 0.0f, float fov = 60.0f)
-		: position(position), yaw(yaw), pitch(pitch), fov(fov) {}
+	Camera(glm::vec3 position,  float pitch = 0.0f, float yaw = -90.0f, float fov = 60.0f)
+		: position(position), pitch(pitch), yaw(yaw), fov(fov) {}
 	
 	glm::mat4 GetProjectionMatrix(float width, float height) {
 		return glm::perspective(glm::radians(fov), width / height, 0.1f, 100.0f);
