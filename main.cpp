@@ -1,6 +1,9 @@
 #include <SFML/Window.hpp>
 #include <GL/glew.h>	// modern OpenGL aren't present by default
+#include <glm/glm.hpp>
 #include <iostream>
+
+#include "Mesh.hpp"
 
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
@@ -10,15 +13,7 @@ constexpr auto vertexShaderCode = "#version 330 core\n"
 "void main() { gl_Position = vec4(pos, 1.0); }";
 constexpr auto fragmentShaderCode = "#version 330 core\n"
 "out vec4 FragColor;\n"
-"void main() { FragColor = vec4(1.0,1.0,0.0,1.0); }";
-constexpr auto POINT_SIZE = 3;
-constexpr auto SIZEOF_POINT = POINT_SIZE * sizeof(float);
-constexpr float vertices[] = {
-	1.0f, -1.0f, 0.0f,
-	-1.0f, -1.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
-};
-constexpr auto SIZEOF_VERTICESLIST = sizeof(vertices) / 3;
+"void main() { FragColor = vec4(0.0,1.0,0.0,1.0); }";
 
 static void OutputError(size_t shader) {
 	const auto infoBufferSize = 1024;
@@ -64,20 +59,6 @@ static size_t CreateProgramShader() {
 	return shader;
 }
 
-static void InitializeVertexObjects(size_t vertexArray, size_t vertexBuffer) {
-	// Bind
-	glBindVertexArray(vertexArray);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, POINT_SIZE, GL_FLOAT, GL_FALSE, SIZEOF_POINT, nullptr);
-	glEnableVertexAttribArray(0);
-
-	// Un-bind, good practice
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
 int main() {
 	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
 	if (glewInit() != GLEW_OK) {
@@ -87,11 +68,14 @@ int main() {
 	
 	const auto shader = CreateProgramShader();
 
-	size_t vertexArray{};
-	glGenVertexArrays(1, &vertexArray);
-	size_t vertexBuffer{};
-	glGenBuffers(1, &vertexBuffer);
-	InitializeVertexObjects(vertexArray, vertexBuffer);
+	Mesh mesh({
+		glm::vec3(0.8f, 0.8f, 0.0f),
+		glm::vec3(0.8f, -0.8f, 0.0f),
+		glm::vec3(-0.8f, -0.8f, 0.0f),
+		glm::vec3(-0.8f, 0.8f, 0.0f),
+	}, { 0, 1, 3, 1, 2, 3 });
+
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // to see the triangle mesh
 
 	while (window.isOpen()) {
 		sf::Event event{};
@@ -106,8 +90,7 @@ int main() {
 
 		// 2. Draw
 		glUseProgram(shader);
-		glBindVertexArray(vertexArray);
-		glDrawArrays(GL_TRIANGLES, 0, SIZEOF_VERTICESLIST);
+		mesh.Draw();
 
 		// 3. Display
 		window.display();
