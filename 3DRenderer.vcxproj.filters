@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{5e95197b-8566-4c65-b010-fee7a1c80f34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera.hpp">
@@ -44,5 +47,13 @@
     <ClCompile Include="Source\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\vertex.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="Source\frag.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

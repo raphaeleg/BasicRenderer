@@ -1,6 +1,8 @@
 #include <SFML/Window.hpp>
 #include <GL/glew.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include "Camera.hpp"
@@ -12,6 +14,18 @@ static const auto TITLE = "3D OpenGL";
 static const float speed = 6.0f;
 const float mouseSensitivity = 25.0f;
 
+static std::string ReadTextFile(const std::string fileName) {
+	std::ifstream file(fileName);
+	if (!file.is_open()) { 
+		std::cerr << "Failed to open "+fileName+"\n";
+		return "";
+	}
+	std::stringstream ss{};
+	ss << file.rdbuf();
+	file.close();
+	return ss.str();
+}
+
 static void Render(Shader shader, Object object, Camera camera, sf::Vector2u windowSize) {
 	shader.Use();
 	shader.SetValue("view", camera.GetViewMatrix());
@@ -20,24 +34,13 @@ static void Render(Shader shader, Object object, Camera camera, sf::Vector2u win
 }
 
 int main() {
-	constexpr auto vertexShaderCode = "#version 330 core\n"
-		"layout (location = 0) in vec3 pos;\n"
-		"uniform mat4 projection;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 model;\n"
-		"void main() { gl_Position = projection * view * model * vec4(pos, 1.0); }";
-	constexpr auto fragmentShaderCode = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"uniform vec3 color;\n"
-		"void main() { FragColor = vec4(color,1.0); }";
-
 	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
 	if (glewInit() != GLEW_OK) {
 		std::cerr << "Failed to initialize GLEW\n";
 		return -1;
 	}
 	
-	Shader shader(vertexShaderCode, fragmentShaderCode);
+	Shader shader(ReadTextFile("Source/vertex.glsl"), ReadTextFile("Source/frag.glsl"));
 
 	Mesh mesh({
 		glm::vec3(-0.5f, -0.5f, -0.5f),
