@@ -1,16 +1,28 @@
 #include <SFML/Window.hpp>
-#include <string>
-// at different OSes, OpenGL is located at different places. Use the correct OpenGL header.
-#include <SFML/OpenGL.hpp>
+#include <GL/glew.h>	// modern OpenGL aren't present by default
+#include <iostream>
 
-static constexpr int WIDTH = 1200;
-static constexpr int HEIGHT = 900;
-static std::string TITLE = "3D OpenGL";
+static constexpr auto WIDTH = 1200;
+static constexpr auto HEIGHT = 900;
+static const auto TITLE = "3D OpenGL";
 
 
 int main() {
+	const char* vertexShaderCode = "#version 330 core\n"
+		"layout (location = 0) in vec3 pos;\n"
+		"void main() { gl_Position = vec4(pos, 1.0); }";
+	const char* fragmentShaderCode = "#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main() { FragColor = vec4(1.0,1.0,0.0,1.0); }";
+		;
+	
 	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
 
+	if (glewInit() != GLEW_OK) {
+		std::cerr << "Failed to initialize GLEW\n";
+		return -1;
+	}
+	
 	while (window.isOpen()) {
 		sf::Event event{};
 		while (window.pollEvent(event)) {
