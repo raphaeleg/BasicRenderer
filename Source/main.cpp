@@ -36,15 +36,24 @@ static void Render(Shader shader, Object object, Camera camera, sf::Vector2u win
 	shader.Use();
 	shader.SetValue("view", camera.GetViewMatrix());
 	shader.SetValue("projection", camera.GetProjectionMatrix(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
+	shader.SetValue("lightPos", camera.position);
+	shader.SetValue("viewPos", camera.position);
 	object.Draw(shader, glm::vec3(1.0f, 0.5f, 0.5f));
 }
 
 int main() {
-	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), WINDOW_TITLE);
+	sf::ContextSettings settings;
+	settings.majorVersion = 3;
+	settings.minorVersion = 3;
+	settings.depthBits = 24;
+
+	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), WINDOW_TITLE, sf::Style::Default, settings);
 	if (glewInit() != GLEW_OK) {
 		std::cerr << "Failed to initialize GLEW\n";
 		return -1;
 	}
+
+	glEnable(GL_DEPTH_TEST);
 	
 	Shader shader(ReadTextFile(VERTEX_FILENAME), ReadTextFile(FRAGMENT_FILENAME));
 
@@ -102,7 +111,7 @@ int main() {
 			window.setMouseCursorVisible(true);
 		}
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Render(shader, object, camera, window.getSize());
 
