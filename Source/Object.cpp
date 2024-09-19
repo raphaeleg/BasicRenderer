@@ -3,9 +3,8 @@
 #include <glm/gtc/quaternion.hpp>
 
 void Object::Draw(Shader shader, glm::vec3 color) { 
-	shader.SetValue("model", GetTransformationMatrix());
 	shader.SetValue("color", color); 
-	mesh->Draw(); 
+	model->Draw(shader, GetTransformationMatrix()); 
 };
 
 glm::mat4 Object::GetTransformationMatrix() const {

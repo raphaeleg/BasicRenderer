@@ -10,9 +10,15 @@
 
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
-static const auto TITLE = "3D OpenGL";
-static const float speed = 6.0f;
-const float mouseSensitivity = 25.0f;
+static const auto WINDOW_TITLE = "3D OpenGL";
+const auto MODEL_FILENAME = "Robin_Bird_M.fbx";
+const auto VERTEX_FILENAME = "Source/vertex.glsl";
+const auto FRAGMENT_FILENAME = "Source/frag.glsl";
+constexpr glm::vec3 CAM_POSITION = glm::vec3(-14.6f, 17.0f, 7.3f);
+constexpr float CAM_PITCH = -400.5f;
+constexpr float CAM_YAW = 26.7f;
+constexpr float CAM_SPEED = 6.0f;
+constexpr float MOUSE_SENSITIVITY = 25.0f;
 
 static std::string ReadTextFile(const std::string fileName) {
 	std::ifstream file(fileName);
@@ -34,35 +40,19 @@ static void Render(Shader shader, Object object, Camera camera, sf::Vector2u win
 }
 
 int main() {
-	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), TITLE);
+	sf::Window window(sf::VideoMode(WIDTH, HEIGHT), WINDOW_TITLE);
 	if (glewInit() != GLEW_OK) {
 		std::cerr << "Failed to initialize GLEW\n";
 		return -1;
 	}
 	
-	Shader shader(ReadTextFile("Source/vertex.glsl"), ReadTextFile("Source/frag.glsl"));
+	Shader shader(ReadTextFile(VERTEX_FILENAME), ReadTextFile(FRAGMENT_FILENAME));
 
-	Mesh mesh({
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, 0.5f, -0.5f),
-		glm::vec3(-0.5f, 0.5f, -0.5f),
-		glm::vec3(-0.5f, -0.5f, 0.5f),
-		glm::vec3(0.5f, -0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, 0.5f),
-	}, { 
-		0, 1, 2, 2, 3, 0,
-		4, 5, 6, 6, 7, 4,
-		1, 5, 6, 6, 2, 1,
-		0, 4, 7, 7, 3, 0,
-		3, 2, 6, 6, 7, 3,
-		0, 1, 5, 5, 4, 0
-	});
+	Model model(MODEL_FILENAME);
 
-	Camera camera(glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera camera(CAM_POSITION, CAM_PITCH, CAM_YAW);
 
-	Object object(&mesh, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(), glm::vec3(2.0f, 5.0f, 2.0f));
+	Object object(&model);
 
 	bool isMouseHold = false;
 	sf::Vector2i lastMousePos{};
@@ -82,12 +72,12 @@ int main() {
 		}
 
 		camera.UpdateDirectionVectors();
-		const float speedMod = speed * deltaTime;
+		const float speedMod = CAM_SPEED * deltaTime;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { camera.position += camera.Forward() * speedMod; }
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) { camera.position -= camera.Forward() * speedMod; }
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { camera.position -= camera.Right() * speedMod; }
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))  { camera.position += camera.Right() * speedMod; }
-
+		
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 			if (isMouseHold = false) {
 				lastMousePos = sf::Mouse::getPosition(window);
@@ -98,8 +88,8 @@ int main() {
 				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 				int xOffset = mousePos.x - lastMousePos.x;
 				int yOffset = lastMousePos.y - mousePos.y;
-				camera.yaw += xOffset * mouseSensitivity * deltaTime;
-				camera.pitch += yOffset * mouseSensitivity * deltaTime;
+				camera.yaw += xOffset * MOUSE_SENSITIVITY * deltaTime;
+				camera.pitch += yOffset * MOUSE_SENSITIVITY * deltaTime;
 				sf::Mouse::setPosition(lastMousePos, window);
 			}
 		}

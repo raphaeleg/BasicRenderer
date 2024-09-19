@@ -6,6 +6,8 @@ class Mesh {
 public:
 	Mesh(std::vector<glm::vec3> vertices, std::vector<uint32_t> indices);
 	void Draw() const;
+
+	glm::mat4 transformation;
 private:
 	const int POINT_SIZE = 3;
 	const size_t SIZEOF_POINT = POINT_SIZE * sizeof(float);
