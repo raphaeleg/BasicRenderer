@@ -10,10 +10,11 @@ struct Vertex {
 
 class Mesh {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, size_t materialIndex = 0);
 	void Draw() const;
 
-	glm::mat4 transformation;
+	glm::mat4 transformation{};
+	size_t materialIndex = 0;
 private:
 	const int POINT_SIZE = 3;
 	const size_t SIZEOF_VERTICESLIST = sizeof(vertices) / 3;

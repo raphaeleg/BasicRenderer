@@ -14,11 +14,21 @@ Model::Model(const std::string fileName) {
 		return;
 	}
 	processNode(scene->mRootNode, scene, glm::mat4(1.0f));
+
+	for (size_t i = 0; i < scene->mNumMaterials; i++) {
+		materials.push_back(processMaterial(scene->mMaterials[i]));
+	}
 }
 
 void Model::Draw(Shader shader, glm::mat4 transformation) {
 	for (const Mesh mesh : meshes) {
+		const Material mat = materials[mesh.materialIndex];
+
 		shader.Use();
+		shader.SetValue("material.diffuse", mat.diffuse);
+		shader.SetValue("material.specular", mat.specular);
+		shader.SetValue("material.shininess", mat.shininess);
+
 		shader.SetValue("model", mesh.transformation * transformation);
 		mesh.Draw();
 	}
@@ -66,5 +76,21 @@ Mesh Model::processMesh(aiMesh* mesh) {
 		}
 	}
 
-	return Mesh(vertices, indices);
+	return Mesh(vertices, indices, mesh->mMaterialIndex);
+}
+ 
+Material Model::processMaterial(aiMaterial* mat) {
+	aiColor3D diffuse;
+	aiColor3D specular;
+	float shine;
+
+	mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+	mat->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+	auto shininess = mat->Get(AI_MATKEY_SHININESS, shine);
+
+	return {
+		glm::vec3(diffuse.r, diffuse.g, diffuse.b),
+		glm::vec3(specular.r, specular.g, specular.b),
+		shine
+	};
 }

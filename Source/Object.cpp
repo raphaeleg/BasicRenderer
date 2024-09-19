@@ -2,11 +2,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-void Object::Draw(Shader shader, const Material mat) { 
-	shader.Use();
-	shader.SetValue("material.diffuse", mat.diffuse);
-	shader.SetValue("material.specular", mat.specular);
-	shader.SetValue("material.shininess", mat.shininess);
+void Object::Draw(Shader shader) { 
 	model->Draw(shader, GetTransformationMatrix()); 
 };
 

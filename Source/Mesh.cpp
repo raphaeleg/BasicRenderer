@@ -2,8 +2,8 @@
 #include <GL/glew.h>	// modern OpenGL aren't present by default
 #include <glm/glm.hpp>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices) 
-	: vertices(vertices), indices(indices), transformation()
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, size_t materialIndex) 
+	: vertices(vertices), indices(indices), materialIndex(materialIndex)
 {
 	glGenBuffers(1, &vertexBuffer);
 	glGenBuffers(1, &elementBuffer);

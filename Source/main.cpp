@@ -11,7 +11,7 @@
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
 static const auto WINDOW_TITLE = "3D OpenGL";
-const auto MODEL_FILENAME = "Robin_Bird_M.fbx";
+const auto MODEL_FILENAME = "Models/source/Robin_Bird_M.fbx";
 const auto VERTEX_FILENAME = "Source/vertex.glsl";
 const auto FRAGMENT_FILENAME = "Source/frag.glsl";
 constexpr glm::vec3 CAM_POSITION = glm::vec3(-14.6f, 17.0f, 7.3f);
@@ -38,7 +38,7 @@ static void Render(Shader shader, Object object, Camera camera, sf::Vector2u win
 	shader.SetValue("projection", camera.GetProjectionMatrix(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
 	shader.SetValue("lightPos", camera.position);
 	shader.SetValue("viewPos", camera.position);
-	object.Draw(shader, mat);
+	object.Draw(shader);
 }
 
 int main() {
