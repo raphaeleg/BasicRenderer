@@ -16,14 +16,14 @@ const auto VERTEX_FILENAME = "Source/vertex.glsl";
 const auto FRAGMENT_FILENAME = "Source/frag.glsl";
 constexpr glm::vec3 CAM_POSITION = glm::vec3(-14.6f, 17.0f, 7.3f);
 constexpr float CAM_PITCH = -400.5f;
-constexpr float CAM_YAW = 26.7f;
+constexpr float CAM_YAW = -26.7f;
 constexpr float CAM_SPEED = 6.0f;
 constexpr float MOUSE_SENSITIVITY = 25.0f;
 
 static std::string ReadTextFile(const std::string fileName) {
 	std::ifstream file(fileName);
 	if (!file.is_open()) { 
-		std::cerr << "Failed to open "+fileName+"\n";
+		std::cerr << "ERROR: Failed to open "+fileName+"\n";
 		return "";
 	}
 	std::stringstream ss{};
@@ -53,6 +53,10 @@ int main() {
 	Camera camera(CAM_POSITION, CAM_PITCH, CAM_YAW);
 
 	Object object(&model);
+
+	shader.Use();
+	shader.SetValue("ambientStrength", 0.1f);
+	shader.SetValue("lightColor", glm::vec3(1.0f));
 
 	bool isMouseHold = false;
 	sf::Vector2i lastMousePos{};
@@ -105,3 +109,4 @@ int main() {
 		window.display();
 	}
 }
+

@@ -3,7 +3,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 void Object::Draw(Shader shader, glm::vec3 color) { 
-	shader.SetValue("color", color); 
+	shader.SetValue("baseColor", color); 
 	model->Draw(shader, GetTransformationMatrix()); 
 };
 
