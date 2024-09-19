@@ -1,10 +1,10 @@
-#include "Model.hpp"
+#include "Scene.hpp"
 #include <iostream>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-Model::Model(const std::string fileName) {
+Scene::Scene(const std::string fileName) {
 	Assimp::Importer importer;
 	importer.ReadFile(fileName, aiProcess_Triangulate);
 
@@ -20,7 +20,7 @@ Model::Model(const std::string fileName) {
 	}
 }
 
-void Model::Draw(Shader shader, glm::mat4 transformation) {
+void Scene::Draw(Shader shader) {
 	for (const Mesh mesh : meshes) {
 		const Material mat = materials[mesh.materialIndex];
 
@@ -29,12 +29,12 @@ void Model::Draw(Shader shader, glm::mat4 transformation) {
 		shader.SetValue("material.specular", mat.specular);
 		shader.SetValue("material.shininess", mat.shininess);
 
-		shader.SetValue("model", mesh.transformation * transformation);
+		shader.SetValue("scene", mesh.transformation);
 		mesh.Draw();
 	}
 }
 
-void Model::processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransformation) {
+void Scene::processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransformation) {
 	const auto t = node->mTransformation;
 	glm::mat4 transformation = {
 		{t.a1, t.b1, t.c1, t.d1},
@@ -55,7 +55,7 @@ void Model::processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTran
 	}
 }
 
-Mesh Model::processMesh(aiMesh* mesh) {
+Mesh Scene::processMesh(aiMesh* mesh) {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
@@ -79,7 +79,7 @@ Mesh Model::processMesh(aiMesh* mesh) {
 	return Mesh(vertices, indices, mesh->mMaterialIndex);
 }
  
-Material Model::processMaterial(aiMaterial* mat) {
+Material Scene::processMaterial(aiMaterial* mat) {
 	aiColor3D diffuse;
 	aiColor3D specular;
 	float shine;

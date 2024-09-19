@@ -8,10 +8,10 @@ out vec3 Normal;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform mat4 model;
+uniform mat4 scene;
 
 void main() { 
-	gl_Position = projection * view * model * vec4(pos, 1.0); 
-	FragPos = vec3(model * vec4(pos, 1.0)); // world position
-	Normal = mat3(transpose(inverse(model))) * norm;
+	gl_Position = projection * view * scene * vec4(pos, 1.0); 
+	FragPos = vec3(scene * vec4(pos, 1.0)); // world position
+	Normal = mat3(transpose(inverse(scene))) * norm;
 }

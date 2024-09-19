@@ -13,10 +13,10 @@ struct Material {
 		: diffuse(diffuse), specular(specular), shininess(shininess) {};
 };
 
-class Model {
+class Scene {
 public:
-	Model(const std::string fileName);
-	void Draw(Shader shader, glm::mat4 transformation);
+	Scene(const std::string fileName);
+	void Draw(Shader shader);
 private:
 	void processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransformation);
 	Material processMaterial(aiMaterial* material);

@@ -6,12 +6,11 @@
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include "Camera.hpp"
-#include "Object.hpp"
+#include "Scene.hpp"
 
 static constexpr auto WIDTH = 800;
 static constexpr auto HEIGHT = 800;
 static const auto WINDOW_TITLE = "3D OpenGL";
-const auto MODEL_FILENAME = "Models/source/Robin_Bird_M.fbx";
 const auto VERTEX_FILENAME = "Source/vertex.glsl";
 const auto FRAGMENT_FILENAME = "Source/frag.glsl";
 constexpr glm::vec3 CAM_POSITION = glm::vec3(-14.6f, 17.0f, 7.3f);
@@ -32,16 +31,17 @@ static std::string ReadTextFile(const std::string fileName) {
 	return ss.str();
 }
 
-static void Render(Shader shader, Object object, Camera camera, sf::Vector2u windowSize, Material mat) {
+static void Render(Shader shader, Scene scene, Camera camera, sf::Vector2u windowSize) {
 	shader.Use();
 	shader.SetValue("view", camera.GetViewMatrix());
 	shader.SetValue("projection", camera.GetProjectionMatrix(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
 	shader.SetValue("lightPos", camera.position);
 	shader.SetValue("viewPos", camera.position);
-	object.Draw(shader);
+
+	scene.Draw(shader);
 }
 
-int main() {
+int main(int argc, char** argv) {
 	sf::ContextSettings settings;
 	settings.majorVersion = 3;
 	settings.minorVersion = 3;
@@ -57,17 +57,13 @@ int main() {
 	
 	Shader shader(ReadTextFile(VERTEX_FILENAME), ReadTextFile(FRAGMENT_FILENAME));
 
-	Model model(MODEL_FILENAME);
+	auto scene_fileName = "Models/source/Robin_Bird_M.fbx";
+	if (argc > 1) {
+		scene_fileName = argv[1];
+	}
+	Scene scene(scene_fileName);
 
 	Camera camera(CAM_POSITION, CAM_PITCH, CAM_YAW);
-
-	Object object(&model);
-
-	const Material material = {
-		glm::vec3(1.0f,0.5f,0.5f),
-		glm::vec3(1.0f),
-		2.0f
-	};
 
 	shader.Use();
 	shader.SetValue("ambientStrength", 0.1f);
@@ -119,7 +115,7 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Render(shader, object, camera, window.getSize(), material);
+		Render(shader, scene, camera, window.getSize());
 
 		window.display();
 	}
