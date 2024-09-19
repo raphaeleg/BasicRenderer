@@ -2,8 +2,8 @@
 #include <GL/glew.h>	// modern OpenGL aren't present by default
 #include <glm/glm.hpp>
 
-Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<uint32_t> indices) 
-	: vertices(vertices), indices(indices)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices) 
+	: vertices(vertices), indices(indices), transformation()
 {
 	glGenBuffers(1, &vertexBuffer);
 	glGenBuffers(1, &elementBuffer);
@@ -13,7 +13,7 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<uint32_t> indices)
 	glBindVertexArray(vertexArray);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	size_t sizeOfVertices = vertices.size() * sizeof(glm::vec3);
+	size_t sizeOfVertices = vertices.size() * sizeof(Vertex);
 	glBufferData(GL_ARRAY_BUFFER, sizeOfVertices, vertices.data(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
@@ -21,8 +21,10 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<uint32_t> indices)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIndicess, indices.data(), GL_STATIC_DRAW);
 
 	// Initialize
-	glVertexAttribPointer(0, POINT_SIZE, GL_FLOAT, GL_FALSE, SIZEOF_POINT, nullptr);
+	glVertexAttribPointer(0, POINT_SIZE, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, POINT_SIZE, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(1);
 
 	// Un-bind, good practice
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

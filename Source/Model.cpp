@@ -46,12 +46,17 @@ void Model::processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTran
 }
 
 Mesh Model::processMesh(aiMesh* mesh) {
-	std::vector<glm::vec3> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
 	for (size_t i = 0; i < mesh->mNumVertices; i++) {
-		aiVector3D vec = mesh->mVertices[i];
-		vertices.push_back(glm::vec3(vec.x, vec.y, vec.z));
+		aiVector3D pos = mesh->mVertices[i];
+		aiVector3D norm = mesh->mNormals[i];
+		Vertex vertex{ 
+			glm::vec3(pos.x, pos.y, pos.z), 
+			glm::vec3(norm.x, norm.y, norm.z)
+		};
+		vertices.push_back(vertex);
 	}
 
 	for (size_t i = 0; i < mesh->mNumFaces; i++) {
