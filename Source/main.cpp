@@ -32,13 +32,13 @@ static std::string ReadTextFile(const std::string fileName) {
 	return ss.str();
 }
 
-static void Render(Shader shader, Object object, Camera camera, sf::Vector2u windowSize) {
+static void Render(Shader shader, Object object, Camera camera, sf::Vector2u windowSize, Material mat) {
 	shader.Use();
 	shader.SetValue("view", camera.GetViewMatrix());
 	shader.SetValue("projection", camera.GetProjectionMatrix(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
 	shader.SetValue("lightPos", camera.position);
 	shader.SetValue("viewPos", camera.position);
-	object.Draw(shader, glm::vec3(1.0f, 0.5f, 0.5f));
+	object.Draw(shader, mat);
 }
 
 int main() {
@@ -62,6 +62,12 @@ int main() {
 	Camera camera(CAM_POSITION, CAM_PITCH, CAM_YAW);
 
 	Object object(&model);
+
+	const Material material = {
+		glm::vec3(1.0f,0.5f,0.5f),
+		glm::vec3(1.0f),
+		2.0f
+	};
 
 	shader.Use();
 	shader.SetValue("ambientStrength", 0.1f);
@@ -113,7 +119,7 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Render(shader, object, camera, window.getSize());
+		Render(shader, object, camera, window.getSize(), material);
 
 		window.display();
 	}

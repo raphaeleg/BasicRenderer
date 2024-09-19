@@ -10,7 +10,11 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-uniform vec3 baseColor;
+uniform struct {
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+} material;
 
 void main() { 
 	vec3 Ia = lightColor * ambientStrength;	// ambient
@@ -23,8 +27,8 @@ void main() {
 	// specular
 	vec3 V = normalize(viewPos - FragPos);
 	vec3 Rm = reflect(-Lm, N);
-	vec3 Is = lightColor * pow(max(dot(Rm, V), 0.0), 256) * 0.5;
+	vec3 Is = lightColor * pow(max(dot(Rm, V), 0.0), material.shininess) * 0.5;
 
-	vec3 color = (Ia + Id + Is) * baseColor;
+	vec3 color = (Ia + Id) * material.diffuse + Is * material.specular;
 	FragColor = vec4(color,1.0); 
 }
