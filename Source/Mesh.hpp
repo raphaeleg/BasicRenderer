@@ -5,24 +5,25 @@
 struct Vertex {
 	glm::vec3 position;
 	glm::vec3 normal;
-	Vertex(glm::vec3 position, glm::vec3 normal) : position(position), normal(normal) {};
+	Vertex(glm::vec3 position, glm::vec3 normal) 
+		: position(position), normal(normal) {};
 };
 
 class Mesh {
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, size_t materialIndex = 0);
-	void Draw() const;
-
 	glm::mat4 transformation{};
 	size_t materialIndex = 0;
-private:
-	const int POINT_SIZE = 3;
-	const size_t SIZEOF_VERTICESLIST = sizeof(vertices) / 3;
 
-	std::vector<Vertex> vertices{};
-	std::vector<uint32_t> indices{};
+	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, size_t materialIndex = 0);
+	void Draw() const;
+private:
+	static constexpr int POINT_SIZE = 3;
+	const size_t SIZEOF_VERTICESLIST = sizeof(vertices) / 3;
 
 	uint32_t vertexArray{};
 	uint32_t vertexBuffer{};
 	uint32_t elementBuffer{};
+
+	std::vector<Vertex> vertices{};
+	std::vector<uint32_t> indices{};
 };

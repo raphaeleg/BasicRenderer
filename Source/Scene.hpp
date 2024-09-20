@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 #include "Mesh.hpp"
 #include "Shader.hpp"
+#include <string>
 #include <assimp/scene.h>
 
 struct Material {
@@ -15,6 +15,7 @@ struct Material {
 
 class Scene {
 public:
+	Scene() {};
 	Scene(const std::string fileName);
 	void Draw(Shader shader);
 private:

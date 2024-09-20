@@ -5,6 +5,7 @@
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, size_t materialIndex) 
 	: vertices(vertices), indices(indices), materialIndex(materialIndex)
 {
+	// Generate Buffers
 	glGenBuffers(1, &vertexBuffer);
 	glGenBuffers(1, &elementBuffer);
 	glGenVertexArrays(1, &vertexArray);

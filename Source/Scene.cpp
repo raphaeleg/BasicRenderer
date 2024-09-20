@@ -1,18 +1,19 @@
 #include "Scene.hpp"
-#include <iostream>
+#include "Helper.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
 Scene::Scene(const std::string fileName) {
 	Assimp::Importer importer;
-	importer.ReadFile(fileName, aiProcess_Triangulate);
 
+	importer.ReadFile(fileName, aiProcess_Triangulate);
 	const aiScene* scene = importer.GetScene();
 	if (!scene || !scene->mRootNode || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
-		std::cerr << "ERROR: Failed to load " << fileName << "\n";
+		OutputFileError(fileName);
 		return;
 	}
+
 	processNode(scene->mRootNode, scene, glm::mat4(1.0f));
 
 	for (size_t i = 0; i < scene->mNumMaterials; i++) {

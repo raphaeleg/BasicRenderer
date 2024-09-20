@@ -1,4 +1,5 @@
 #include "Shader.hpp"
+#include "Helper.hpp"
 #include <iostream>
 
 Shader::Shader(const std::string vertexCode, const std::string fragmentCode) {
@@ -18,22 +19,16 @@ Shader::Shader(const std::string vertexCode, const std::string fragmentCode) {
 	glDeleteShader(fragmentShader);
 }
 
-void Shader::OutputError(size_t shader) {
-	const auto infoBufferSize = 1024;
-	char infoLog[infoBufferSize];
-
-	glGetShaderInfoLog(shader, infoBufferSize, nullptr, infoLog);
-	std::cerr << "Failed to compiler shader!\nInfoLog:\n" << infoLog;
-}
 int Shader::CompileShader(const char* code, size_t shader) {
 	glShaderSource(shader, 1, &code, nullptr);
 	glCompileShader(shader);
 
 	int success = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) { OutputError(shader); }
+	if (!success) { OutputShaderError(shader); }
 	return success;
 }
+
  int Shader::LinkShaders(size_t shader, size_t vertexShader, size_t fragmentShader) {
 	glAttachShader(shader, vertexShader);
 	glAttachShader(shader, fragmentShader);
@@ -41,6 +36,6 @@ int Shader::CompileShader(const char* code, size_t shader) {
 
 	int success = 0;
 	glGetProgramiv(shader, GL_LINK_STATUS, &success);
-	if (!success) { OutputError(shader); }
+	if (!success) { OutputShaderError(shader); }
 	return success;
 }
