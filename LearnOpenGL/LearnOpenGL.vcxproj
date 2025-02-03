@@ -135,6 +135,9 @@
     <ClCompile Include="Libraries\lib\glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Texture.hpp" />
     <ClCompile Include="VBO.cpp" />
     <ClCompile Include="VAO.cpp" />
   </ItemGroup>
@@ -147,6 +150,10 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\awesomeface.png" />
+    <Image Include="Textures\wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
